@@ -1,3 +1,13 @@
-"scripts": {
-    "start": "node index.js"
+{
+  "name": "whatsapp-bot",
+  "version": "1.0.0",
+  "description": "Un bot pentru mesaje automate pe WhatsApp.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "twilio": "^4.7.1"
+  }
 }
