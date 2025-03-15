@@ -1,39 +1,33 @@
-require('dotenv').config();
-const qrcode = require('qrcode-terminal');
-const { Client } = require('whatsapp-web.js');
 const express = require('express');
+const twilio = require('twilio');
 
 const app = express();
-const port = process.env.PORT || 3000;
+app.use(express.json());
 
-const client = new Client();
-const ownerNumber = process.env.OWNER_NUMBER;
+// Acreditive Twilio din variabile de mediu
+const accountSid = AC28759a3d5e8b8bc4a9a39e2c5623c9f3; // Definite în mediu
+const authToken = 481e6059e88e0ecf4f2ddc12fc54c511;   // Definite în mediu
+const client = twilio(accountSid, authToken);
 
-client.on('qr', qr => {
-    qrcode.generate(qr, { small: true });
-});
+// Detalii predefinite
+const myNumber = 'whatsapp:+393533870586'; // Numărul tău
+const delaySeconds = 10; // Întârziere în secunde
 
-client.on('ready', () => {
-    console.log('Client is ready!');
-    sendOwnerMessage('Client is ready!');
-});
+app.post('/send-message', (req, res) => {
+    const { target, text } = req.body;
 
-async function sendOwnerMessage(message) {
-    try {
-        const ownerChatId = ownerNumber.substring(1) + '@c.us';
-        await client.sendMessage(ownerChatId, message);
-        console.log(Message sent to owner (${ownerNumber}): ${message});
-    } catch (error) {
-        console.error('Error sending message to owner:', error);
+    if (!target || !text) {
+        return res.status(400).send('Te rog să furnizezi un număr țintă și un mesaj!');
     }
-}
 
-client.initialize();
-
-app.get('/', (req, res) => {
-    res.send('WhatsApp bot is running!');
-});
-
-app.listen(port, () => {
-    console.log(Server listening on port ${port});
+    setTimeout(() => {
+        client.messages
+            .create({
+                from: myNumber,
+                to: `whatsapp:${target}`,
+                body: text,
+            })
+            .then(message => res.status(200).send(`Mesaj trimis cu SID: ${message.sid}`))
+            .catch(error => res.status(500).send(`Eroare: ${error.message}`));
+    }, delaySeconds * 1000);
 });
