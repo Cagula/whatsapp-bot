@@ -13,6 +13,12 @@ const client = twilio(accountSid, authToken);
 const myNumber = 'whatsapp:+393533870586'; // Numărul tău
 const delaySeconds = 10; // Întârziere în secunde
 
+// Route pentru pagina principală
+app.get('/', (req, res) => {
+    res.send('Serverul funcționează! Poți folosi endpoint-ul /send-message pentru a trimite mesaje.');
+});
+
+// Endpoint pentru trimiterea mesajelor
 app.post('/send-message', (req, res) => {
     const { target, text } = req.body;
 
@@ -32,5 +38,6 @@ app.post('/send-message', (req, res) => {
     }, delaySeconds * 1000);
 });
 
+// Pornire server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server pornit pe portul ${PORT}`));
