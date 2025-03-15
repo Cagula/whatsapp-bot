@@ -5,8 +5,8 @@ const app = express();
 app.use(express.json());
 
 // Acreditive Twilio din variabile de mediu
-const accountSid = AC28759a3d5e8b8bc4a9a39e2c5623c9f3; // Definite în mediu
-const authToken = 481e6059e88e0ecf4f2ddc12fc54c511;   // Definite în mediu
+const accountSid = process.env.TWILIO_ACCOUNT_SID; // Variabilă de mediu
+const authToken = process.env.TWILIO_AUTH_TOKEN;   // Variabilă de mediu
 const client = twilio(accountSid, authToken);
 
 // Detalii predefinite
@@ -31,3 +31,6 @@ app.post('/send-message', (req, res) => {
             .catch(error => res.status(500).send(`Eroare: ${error.message}`));
     }, delaySeconds * 1000);
 });
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server pornit pe portul ${PORT}`));
