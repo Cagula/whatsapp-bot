@@ -1,39 +1,49 @@
-const express = require('express');
-const twilio = require('twilio');
-const path = require('path');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conectare WhatsApp</title>
+</head>
+<body>
+    <h1>Conectare WhatsApp</h1>
 
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // Procesare date formular
+    <!-- Formular pentru trimiterea codului -->
+    <form action="/send-code" method="POST">
+        <label for="myNumber">Numărul tău WhatsApp (inclusiv +):</label><br>
+        <input type="text" id="myNumber" name="myNumber" placeholder="+1234567890" required><br><br>
+        <button type="submit">Trimite cod</button>
+    </form>
 
-// Acreditive Twilio din variabile de mediu
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = twilio(accountSid, authToken);
+    <hr>
 
-// Stocare coduri de verificare (temporar)
-const codes = {};
+    <!-- Formular pentru verificarea codului -->
+    <form action="/verify-code" method="POST">
+        <label for="myNumber">Numărul tău WhatsApp (inclusiv +):</label><br>
+        <input type="text" id="myNumber" name="myNumber" placeholder="+1234567890" required><br><br>
 
-// Servește pagina HTML
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
+        <label for="code">Codul de verificare:</label><br>
+        <input type="text" id="code" name="code" placeholder="123456" required><br><br>
+        <button type="submit">Verifică cod</button>
+    </form>
 
-// Endpoint pentru trimiterea codului de verificare
-app.post('/send-code', (req, res) => {
-    const { myNumber } = req.body;
+    <hr>
 
-    if (!myNumber) {
-        return res.status(400).send('Te rog să introduci un număr de telefon!');
-    }
+    <!-- Formular pentru trimiterea mesajelor -->
+    <form action="/send-message" method="POST">
+        <label for="myNumber">Numărul tău WhatsApp (inclusiv +):</label><br>
+        <input type="text" id="myNumber" name="myNumber" placeholder="+1234567890" required><br><br>
 
-    const verificationCode = Math.floor(100000 + Math.random() * 900000);
-    codes[myNumber] = verificationCode;
+        <label for="target">Număr țintă (inclusiv +):</label><br>
+        <input type="text" id="target" name="target" placeholder="+0987654321" required><br><br>
 
-    client.messages
-        .create({
-            from: 'whatsapp:+14155238886', // Numărul Twilio
-            to: `whatsapp:${myNumber}`,
-            body: `Codul tău de verificare este: ${verificationCode}`,
-        })
-        .then(()
+        <label for="text">Mesaj:</label><br>
+        <textarea id="text" name="text" placeholder="Scrie mesajul aici..." required></textarea><br><br>
+
+        <label for="delay">Întârziere (secunde):</label><br>
+        <input type="number" id="delay" name="delay" placeholder="10" required><br><br>
+
+        <button type="submit">Trimite mesaj</button>
+    </form>
+</body>
+</html>
