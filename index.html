@@ -3,47 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conectare WhatsApp</title>
+    <title>Generare Cod QR</title>
 </head>
 <body>
-    <h1>Conectare WhatsApp</h1>
+    <h1>Generare Cod QR</h1>
 
-    <!-- Formular pentru trimiterea codului -->
-    <form action="/send-code" method="POST">
-        <label for="myNumber">Numărul tău WhatsApp (inclusiv +):</label><br>
-        <input type="text" id="myNumber" name="myNumber" placeholder="+1234567890" required><br><br>
-        <button type="submit">Trimite cod</button>
+    <!-- Formular pentru generarea codului QR -->
+    <form id="qrForm">
+        <label for="text">Introduceți textul pentru codul QR:</label><br>
+        <input type="text" id="text" name="text" placeholder="Scrie ceva..." required><br><br>
+        <button type="submit">Generează Cod QR</button>
     </form>
 
     <hr>
 
-    <!-- Formular pentru verificarea codului -->
-    <form action="/verify-code" method="POST">
-        <label for="myNumber">Numărul tău WhatsApp (inclusiv +):</label><br>
-        <input type="text" id="myNumber" name="myNumber" placeholder="+1234567890" required><br><br>
+    <!-- Afișarea codului QR -->
+    <div id="qrCodeContainer">
+        <h2>Codul QR generat:</h2>
+        <img id="qrCodeImage" src="" alt="Cod QR va apărea aici">
+    </div>
 
-        <label for="code">Codul de verificare:</label><br>
-        <input type="text" id="code" name="code" placeholder="123456" required><br><br>
-        <button type="submit">Verifică cod</button>
-    </form>
+    <script>
+        // Script pentru gestionarea generării codului QR
+        const qrForm = document.getElementById('qrForm');
+        const qrCodeImage = document.getElementById('qrCodeImage');
 
-    <hr>
+        qrForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
 
-    <!-- Formular pentru trimiterea mesajelor -->
-    <form action="/send-message" method="POST">
-        <label for="myNumber">Numărul tău WhatsApp (inclusiv +):</label><br>
-        <input type="text" id="myNumber" name="myNumber" placeholder="+1234567890" required><br><br>
+            const text = document.getElementById('text').value;
 
-        <label for="target">Număr țintă (inclusiv +):</label><br>
-        <input type="text" id="target" name="target" placeholder="+0987654321" required><br><br>
-        
-        <label for="text">Mesaj:</label><br>
-        <textarea id="text" name="text" placeholder="Scrie mesajul aici..." required></textarea><br><br>
-        
-        <label for="delay">Întârziere (secunde):</label><br>
-        <input type="number" id="delay" name="delay" placeholder="10" required><br><br>
-        
-        <button type="submit">Trimite mesaj</button>
-    </form>
+            const response = await fetch('/generate-qr', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                qrCodeImage.src = data.qrCodeUrl; // Setează imaginea codului QR
+            } else {
+                alert('A apărut o eroare la generarea codului QR!');
+            }
+        });
+    </script>
 </body>
 </html>
