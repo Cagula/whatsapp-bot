@@ -1,28 +1,15 @@
 const express = require('express');
-const twilio = require('twilio');
 const path = require('path');
 
 const app = express();
+
+// Middleware pentru procesarea datelor de tip JSON și formulare
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Acreditive Twilio din variabile de mediu
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = twilio(accountSid, authToken);
-
-// Endpoint pentru răspuns pe pagina principală
+// Servește fișierul HTML la ruta principală "/"
 app.get('/', (req, res) => {
-    res.send('Serverul funcționează corect!');
-});
-
-// Endpoint pentru verificare exemplu
-app.post('/example', (req, res) => {
-    const { message } = req.body;
-    if (!message) {
-        return res.status(400).send('Mesajul este obligatoriu!');
-    }
-    res.send(`Mesajul tău este: ${message}`);
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Pornire server
