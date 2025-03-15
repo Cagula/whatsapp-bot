@@ -1,49 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conectare WhatsApp</title>
-</head>
-<body>
-    <h1>Conectare WhatsApp</h1>
+const express = require('express');
+const twilio = require('twilio');
+const path = require('path');
 
-    <!-- Formular pentru trimiterea codului -->
-    <form action="/send-code" method="POST">
-        <label for="myNumber">Numărul tău WhatsApp (inclusiv +):</label><br>
-        <input type="text" id="myNumber" name="myNumber" placeholder="+1234567890" required><br><br>
-        <button type="submit">Trimite cod</button>
-    </form>
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-    <hr>
+// Acreditive Twilio din variabile de mediu
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = twilio(accountSid, authToken);
 
-    <!-- Formular pentru verificarea codului -->
-    <form action="/verify-code" method="POST">
-        <label for="myNumber">Numărul tău WhatsApp (inclusiv +):</label><br>
-        <input type="text" id="myNumber" name="myNumber" placeholder="+1234567890" required><br><br>
+// Endpoint pentru răspuns pe pagina principală
+app.get('/', (req, res) => {
+    res.send('Serverul funcționează corect!');
+});
 
-        <label for="code">Codul de verificare:</label><br>
-        <input type="text" id="code" name="code" placeholder="123456" required><br><br>
-        <button type="submit">Verifică cod</button>
-    </form>
+// Endpoint pentru verificare exemplu
+app.post('/example', (req, res) => {
+    const { message } = req.body;
+    if (!message) {
+        return res.status(400).send('Mesajul este obligatoriu!');
+    }
+    res.send(`Mesajul tău este: ${message}`);
+});
 
-    <hr>
-
-    <!-- Formular pentru trimiterea mesajelor -->
-    <form action="/send-message" method="POST">
-        <label for="myNumber">Numărul tău WhatsApp (inclusiv +):</label><br>
-        <input type="text" id="myNumber" name="myNumber" placeholder="+1234567890" required><br><br>
-
-        <label for="target">Număr țintă (inclusiv +):</label><br>
-        <input type="text" id="target" name="target" placeholder="+0987654321" required><br><br>
-
-        <label for="text">Mesaj:</label><br>
-        <textarea id="text" name="text" placeholder="Scrie mesajul aici..." required></textarea><br><br>
-
-        <label for="delay">Întârziere (secunde):</label><br>
-        <input type="number" id="delay" name="delay" placeholder="10" required><br><br>
-
-        <button type="submit">Trimite mesaj</button>
-    </form>
-</body>
-</html>
+// Pornire server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server pornit pe portul ${PORT}`);
+});
