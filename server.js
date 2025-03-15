@@ -1,19 +1,17 @@
-const express = require('express');
-const path = require('path');
+app.post('/send-code', (req, res) => {
+    const { myNumber } = req.body;
 
-const app = express();
+    if (!myNumber) {
+        return res.status(400).send('Introduceți un număr valid!');
+    }
 
-// Middleware pentru procesarea datelor de tip JSON și formulare
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+    // Generează codul și trimite-l prin Twilio
+    const verificationCode = Math.floor(100000 + Math.random() * 900000);
 
-// Servește fișierul HTML la ruta principală "/"
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Pornire server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server pornit pe portul ${PORT}`);
+    client.messages.create({
+        from: 'whatsapp:+14155238886', // Numărul Twilio
+        to: `whatsapp:${myNumber}`,
+        body: `Codul de verificare este: ${verificationCode}`,
+    }).then(() => res.send('Cod trimis!'))
+      .catch(error => res.status(500).send(`Eroare: ${error.message}`));
 });
