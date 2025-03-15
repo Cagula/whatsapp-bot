@@ -2,7 +2,7 @@ app.post('/send-code', (req, res) => {
     const { myNumber } = req.body;
 
     if (!myNumber) {
-        return res.status(400).send('Introduceți un număr valid!');
+        return res.status(400).send('+393533870586');
     }
 
     // Generează codul și trimite-l prin Twilio
