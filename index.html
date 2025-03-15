@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send WhatsApp Message</title>
+    <title>Trimite un mesaj WhatsApp</title>
 </head>
 <body>
     <h1>Trimite un mesaj WhatsApp</h1>
     <form action="/send-message" method="POST">
+        <label for="myNumber">Numărul tău WhatsApp (inclusiv +):</label><br>
+        <input type="text" id="myNumber" name="myNumber" placeholder="+1234567890" required><br><br>
+
         <label for="target">Număr țintă (inclusiv +):</label><br>
-        <input type="text" id="target" name="target" placeholder="+1234567890" required><br><br>
+        <input type="text" id="target" name="target" placeholder="+0987654321" required><br><br>
         
         <label for="text">Mesaj:</label><br>
         <textarea id="text" name="text" placeholder="Scrie mesajul aici..." required></textarea><br><br>
