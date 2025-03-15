@@ -1,8 +1,10 @@
 const express = require('express');
 const twilio = require('twilio');
+const path = require('path');
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // Pentru a procesa datele din formular
 
 // Acreditive Twilio din variabile de mediu
 const accountSid = process.env.TWILIO_ACCOUNT_SID; // Variabilă de mediu
@@ -11,20 +13,21 @@ const client = twilio(accountSid, authToken);
 
 // Detalii predefinite
 const myNumber = 'whatsapp:+393533870586'; // Numărul tău
-const delaySeconds = 10; // Întârziere în secunde
 
-// Route pentru pagina principală
+// Servește pagina HTML
 app.get('/', (req, res) => {
-    res.send('Serverul funcționează! Poți folosi endpoint-ul /send-message pentru a trimite mesaje.');
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Endpoint pentru trimiterea mesajelor
 app.post('/send-message', (req, res) => {
-    const { target, text } = req.body;
+    const { target, text, delay } = req.body;
 
-    if (!target || !text) {
-        return res.status(400).send('Te rog să furnizezi un număr țintă și un mesaj!');
+    if (!target || !text || !delay) {
+        return res.status(400).send('Te rog să furnizezi un număr țintă, un mesaj și întârzierea!');
     }
+
+    const delaySeconds = parseInt(delay, 10);
 
     setTimeout(() => {
         client.messages
@@ -33,7 +36,7 @@ app.post('/send-message', (req, res) => {
                 to: `whatsapp:${target}`,
                 body: text,
             })
-            .then(message => res.status(200).send(`Mesaj trimis cu SID: ${message.sid}`))
+            .then(message => res.send(`Mesaj trimis cu SID: ${message.sid}`))
             .catch(error => res.status(500).send(`Eroare: ${error.message}`));
     }, delaySeconds * 1000);
 });
