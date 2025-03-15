@@ -3,11 +3,11 @@ const path = require('path');
 
 const app = express();
 
-// Middleware pentru procesarea datelor de tip JSON și formulare
+// Middleware pentru procesarea datelor din formulare
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servește fișierul HTML la ruta principală "/"
+// Servește fișierul HTML corectat la ruta principală
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
