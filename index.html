@@ -1,57 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generare Cod QR</title>
-</head>
-<body>
-    <h1>Generare Cod QR</h1>
+<script>
+    const qrForm = document.getElementById('qrForm');
+    const qrCodeImage = document.getElementById('qrCodeImage');
 
-    <!-- Formular pentru generarea codului QR -->
-    <form id="qrForm">
-        <label for="text">Introduceți textul pentru codul QR:</label><br>
-        <input type="text" id="text" name="text" placeholder="Scrie ceva..." required><br><br>
-        <button type="submit">Generează Cod QR</button>
-    </form>
+    qrForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
 
-    <hr>
+        const text = document.getElementById('text').value;
 
-    <!-- Afișarea codului QR -->
-    <div id="qrCodeContainer" style="display: none;">
-        <h2>Codul QR generat:</h2>
-        <img id="qrCodeImage" src="" alt="Cod QR va apărea aici">
-    </div>
-
-    <script>
-        const qrForm = document.getElementById('qrForm');
-        const qrCodeImage = document.getElementById('qrCodeImage');
-        const qrCodeContainer = document.getElementById('qrCodeContainer');
-
-        qrForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const text = document.getElementById('text').value;
-
-            try {
-                const response = await fetch('/generate-qr', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ text }),
-                });
-
-                if (response.ok) {
-                    const { qrCodeUrl } = await response.json();
-                    qrCodeImage.src = qrCodeUrl;
-                    qrCodeContainer.style.display = 'block';
-                } else {
-                    alert('A apărut o eroare la generarea codului QR!');
-                }
-            } catch (error) {
-                alert('A apărut o eroare la conectarea cu serverul.');
-            }
+        const response = await fetch('/generate-qr', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ text }),
         });
-    </script>
-</body>
-</html>
+
+        if (response.ok) {
+            const { qrCodeUrl } = await response.json();
+            qrCodeImage.src = qrCodeUrl; // Afișează codul QR
+        } else {
+            alert('A apărut o eroare la generarea codului QR!');
+        }
+    });
+</script>
